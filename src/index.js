@@ -2,14 +2,42 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import { store } from './app/store';
+import { createStore, applyMiddleware , combineReducers , compose } from "redux";
+// import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+import thunk from "redux-thunk";
+import ui from './store/reducers/ui.reducer'
+import { SnackbarProvider } from "notistack";
+import auth from './store/reducers/auth.reducer'
+import courses from './store/reducers/courses.reducer'
+import user from './store/reducers/user.reducer'
+import coursesManager from './store/reducers/coursesManager.reducer'
+import usersManager from './store/reducers/usersManager.reducer'
+
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const rootReducer = combineReducers({
+  ui,
+  auth,
+  user,
+  courses,
+  usersManager,
+  coursesManager,
+});
+
+
+const store = createStore(rootReducer,composeEnhancers(applyMiddleware(thunk)));
+// const store = createStore(rootReducer,applyMiddleware(thunk));
+
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
+    <SnackbarProvider preventDuplicate maxSnack={3}>
       <App />
+      </SnackbarProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
